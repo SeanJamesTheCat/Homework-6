@@ -3,3 +3,14 @@ Author: Sean James <saj6853@rit.edu>
 Date:   Sat Nov 1 15:13:14 2025 -0400
 
     initial commit
+commit 37eed31aacf1f97704d753127780e1adc95f0f37
+Author: Sean James <saj6853@rit.edu>
+Date:   Sat Nov 1 15:25:15 2025 -0400
+
+    mat_create() and mat_destroy()
+
+commit 3f7089829ed54b58202bdcdcb8f84721f53ce0e4
+Author: Sean James <saj6853@rit.edu>
+Date:   Sat Nov 1 15:13:14 2025 -0400
+
+    initial commit

@@ -22,11 +22,11 @@ Matrix mat_create( size_t rows, size_t cols ) {
 			for (int prev_row = 0; prev_row < row_i; ++prev_row)
 				free(mtx->data[prev_row]);
 			free(mtx->data);
-			free(matrix);
+			free(mtx);
 			return NULL;
 		}
 		if (rows == cols)
-			mtx->data[row_i][row_i] = 1
+			mtx->data[row_i][row_i] = 1;
 	}
 	return mtx;
 }
