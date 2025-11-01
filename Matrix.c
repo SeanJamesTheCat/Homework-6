@@ -114,20 +114,36 @@ Status mat_get_cell( const Matrix mat, float *data, size_t row, size_t col ) {
 	*data = mat->data[row_index][col_index];
 	return S_STS;
 }
-
+///
 Status mat_set_cell( Matrix mat, float data, size_t row, size_t col ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	if (mat_col_OOB(mat, col)) return C_STS;
+	size_t row_index = row - 1, col_index = col - 1;
+	mat->data[row_index][col_index] = data;
 	return S_STS;
 }
-
+///
 Status mat_get_row( const Matrix mat, float data[], size_t row ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
+	float value, *value_ptr = &value;
+	size_t num_cols = mat->cols, col_i = 1;
+	Status status;
+	for (; col_i <= num_cols; ++col_i) {
+		status = mat_get_cell(mat, value_ptr, row, col_i);
+		if (status != S_STS) return C_STS;
+		data[col_i - 1] = value;
+	}
 	return S_STS;
 }
-
+///
 Status mat_set_row( Matrix mat, const float data[], size_t row ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
+	size_t col_i = 1, num_cols = mat->cols;
+	Status status;
+	for (; col_i <= num_cols; ++col_i) {
+		status = mat_set_cell(mat, data[col_i - 1], row, col_i);
+		if (status != S_STS) return C_STS;
+	}
 	return S_STS;
 }
 
@@ -164,14 +180,36 @@ int main( void ) {
 	      new_values[8] = {
 		      1, 3, 3, 7,
 		      1, 9, 8, 7
-	      };
-	Matrix dupe, mtx = mat_create(2, 4);
-	//mat_print(mtx, stdout);
-	mat_init(mtx, new_values);
+	      },
+	      row[4] = {1, 9, 8, 3};
+	
+	Matrix mtx = mat_create(2, 4), dupe = mat_duplicate(mtx);
 	mat_print(mtx, stdout);
-	mat_get_cell(mtx, value_ptr, 2, 3);
+	printf("\n\n");
+	mat_set_row(mtx, row, 2);
+	mat_print(mtx, stdout);
+	/*
+	mat_get_row(mtx, row, 2);
+	for (int i = 0; i < 4; ++i) printf("%8.3f", row[i]);
+	printf("\n");
+	mat_init(mtx, new_values);
+	mat_get_row(mtx, row, 2);
+	for (int i = 0; i < 4; ++i) printf("%8.3f", row[i]);
+	printf("\n");
+	*/
+	/*
 	dupe = mat_duplicate(mtx);
+	mat_set_cell(mtx, 3.0, 2, 4);
+	mat_get_cell(mtx, value_ptr, 2, 4);
+	printf("mtx2,4 = %8.3f (3)\n", value);
+	mat_get_cell(dupe, value_ptr, 2, 4);
+	printf("dupe2,4 = %8.3f (7)\n", value);
+	mat_set_cell(dupe, 2.0, 1, 2);
+	
+	mat_print(mtx, stdout);
+	printf("\n\n\n");
 	mat_print(dupe, stdout);
+	*/
 	mat_destroy(dupe);
 	mat_destroy(mtx);
 	return EXIT_SUCCESS;
