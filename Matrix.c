@@ -17,7 +17,7 @@ bool mat_row_OOB( Matrix mat, size_t row ) {
 bool mat_col_OOB( Matrix mat, size_t col ) {
 	return col <= 0 || col > mat->cols;
 }
-
+//
 Matrix mat_create( size_t rows, size_t cols ) {
 	if (!rows || !cols) return NULL;
 	Matrix mtx = (Matrix) malloc(sizeof(Matrix));
@@ -43,7 +43,7 @@ Matrix mat_create( size_t rows, size_t cols ) {
 	}
 	return mtx;
 }
-
+//
 void mat_destroy( Matrix mat ) {
 	if (!mat) return;
 	for (int row_i = 0; row_i < mat->rows; ++row_i)
@@ -51,16 +51,35 @@ void mat_destroy( Matrix mat ) {
 	free(mat->data);
 	free(mat);
 }
-
+//
 void mat_init( Matrix mat, const float data[] ) {
 	if (!mat) return;
+	size_t num_rows = mat->rows,
+	       num_cols = mat->cols,
+	       index = 0, row_i = 0, col_i;
+	for (; row_i < num_rows; ++row_i) {
+		for (col_i = 0; col_i < num_cols; ++col_i) {
+			index = (row_i * num_cols) + col_i;
+			mat->data[row_i][col_i] = data[index];
+		}
+	}
 }
-
+//
 Matrix mat_duplicate( const Matrix mat ) {
 	if (!mat) return NULL;
-	return NULL;
+	size_t num_rows = mat->rows,
+	       num_cols = mat->cols,
+	       row_i = 0 , col_i;
+	Matrix dupe = mat_create(num_rows, num_cols);
+	if (!dupe) return NULL;
+	for (; row_i < num_rows; ++row_i) {
+		for (col_i = 0; col_i < num_cols; ++col_i) {
+			dupe->data[row_i][col_i] = mat->data[row_i][col_i];
+		}
+	}
+	return dupe;
 }
-
+//
 bool mat_equals( const Matrix m1, const Matrix m2 ) {
 	bool null1 = !m1,
 	     null2 = !m2,
@@ -87,7 +106,7 @@ void mat_scalar_mult( Matrix mat, float data ) {
 	if (data == 1 || !mat) return;
 	return;
 }
-
+//
 Status mat_get_cell( const Matrix mat, float *data, size_t row, size_t col ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	if (mat_col_OOB(mat, col)) return C_STS;
@@ -121,7 +140,7 @@ Matrix mat_transpose( const Matrix mat ) {
 	if (!mat) return NULL;
 	return NULL;
 }
-
+//
 void mat_print( const Matrix mat, FILE *stream ) {
 	if (!mat) return;
 	size_t num_rows = mat->rows,
@@ -139,13 +158,21 @@ void mat_print( const Matrix mat, FILE *stream ) {
 	}
 	return;
 }
-
+//
 int main( void ) {
-	float value, *value_ptr = &value;
-	Matrix mtx = mat_create(4, 4);
+	float value, *value_ptr = &value,
+	      new_values[8] = {
+		      1, 3, 3, 7,
+		      1, 9, 8, 7
+	      };
+	Matrix dupe, mtx = mat_create(2, 4);
+	//mat_print(mtx, stdout);
+	mat_init(mtx, new_values);
 	mat_print(mtx, stdout);
-	mat_get_cell(mtx, value_ptr, 1, 1);
-	printf("\n%8.3f\n", value);
+	mat_get_cell(mtx, value_ptr, 2, 3);
+	dupe = mat_duplicate(mtx);
+	mat_print(dupe, stdout);
+	mat_destroy(dupe);
 	mat_destroy(mtx);
 	return EXIT_SUCCESS;
 }
