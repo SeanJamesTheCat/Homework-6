@@ -17,7 +17,7 @@ bool mat_row_OOB( Matrix mat, size_t row ) {
 bool mat_col_OOB( Matrix mat, size_t col ) {
 	return col <= 0 || col > mat->cols;
 }
-//
+
 Matrix mat_create( size_t rows, size_t cols ) {
 	if (!rows || !cols) return NULL;
 	Matrix mtx = (Matrix) malloc(sizeof(Matrix));
@@ -43,7 +43,7 @@ Matrix mat_create( size_t rows, size_t cols ) {
 	}
 	return mtx;
 }
-//
+
 void mat_destroy( Matrix mat ) {
 	if (!mat) return;
 	for (int row_i = 0; row_i < mat->rows; ++row_i)
@@ -51,7 +51,7 @@ void mat_destroy( Matrix mat ) {
 	free(mat->data);
 	free(mat);
 }
-//
+
 void mat_init( Matrix mat, const float data[] ) {
 	if (!mat) return;
 	size_t num_rows = mat->rows,
@@ -64,7 +64,7 @@ void mat_init( Matrix mat, const float data[] ) {
 		}
 	}
 }
-//
+
 Matrix mat_duplicate( const Matrix mat ) {
 	if (!mat) return NULL;
 	size_t num_rows = mat->rows,
@@ -79,7 +79,7 @@ Matrix mat_duplicate( const Matrix mat ) {
 	}
 	return dupe;
 }
-//
+
 bool mat_equals( const Matrix m1, const Matrix m2 ) {
 	bool null1 = !m1,
 	     null2 = !m2,
@@ -102,7 +102,6 @@ bool mat_equals( const Matrix m1, const Matrix m2 ) {
 	return true;
 }
 
-//
 Status mat_get_cell( const Matrix mat, float *data, size_t row, size_t col ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	if (mat_col_OOB(mat, col)) return C_STS;
@@ -110,7 +109,7 @@ Status mat_get_cell( const Matrix mat, float *data, size_t row, size_t col ) {
 	*data = mat->data[row_index][col_index];
 	return S_STS;
 }
-//
+
 Status mat_set_cell( Matrix mat, float data, size_t row, size_t col ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	if (mat_col_OOB(mat, col)) return C_STS;
@@ -118,7 +117,7 @@ Status mat_set_cell( Matrix mat, float data, size_t row, size_t col ) {
 	mat->data[row_index][col_index] = data;
 	return S_STS;
 }
-//
+
 Status mat_get_row( const Matrix mat, float data[], size_t row ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	float value, *value_ptr = &value;
@@ -131,7 +130,7 @@ Status mat_get_row( const Matrix mat, float data[], size_t row ) {
 	}
 	return S_STS;
 }
-//
+
 Status mat_set_row( Matrix mat, const float data[], size_t row ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	size_t col_i = 1, num_cols = mat->cols;
@@ -142,7 +141,7 @@ Status mat_set_row( Matrix mat, const float data[], size_t row ) {
 	}
 	return S_STS;
 }
-//
+
 void mat_scalar_mult( Matrix mat, float data ) {
 	if (data == 1 || !mat) return;
 	size_t num_rows = mat->rows,
@@ -157,7 +156,7 @@ void mat_scalar_mult( Matrix mat, float data ) {
 		}
 	}
 }
-//
+
 Matrix mat_transpose( const Matrix mat ) {
 	if (!mat) return NULL;
 	size_t num_t_rows = mat->cols,
@@ -183,7 +182,7 @@ Matrix mat_transpose( const Matrix mat ) {
 	}
 	return t_mtx;
 }
-///
+
 Matrix mat_mult( const Matrix m1, const Matrix m2 ) {
 	if (!m1 || !m2) return NULL;
 	if (m1->cols != m2->rows) return NULL;
@@ -217,7 +216,7 @@ Matrix mat_mult( const Matrix m1, const Matrix m2 ) {
 	}
 	return prod_mtx;
 }
-//
+
 void mat_print( const Matrix mat, FILE *stream ) {
 	if (!mat) return;
 	size_t num_rows = mat->rows,
@@ -234,32 +233,7 @@ void mat_print( const Matrix mat, FILE *stream ) {
 		}
 	}
 }
-//
+
 int main( void ) {
-	float value, *value_ptr = &value,
-	      new_values1[8] = {
-		      1, 3, 3, 7,
-		      1, 9, 8, 7
-	      },
-	      new_values2[8] = {
-		      9, 1, 
-		      1, 9,
-		      0, 8, 
-		      21, 3
-	      };
-	Matrix m1 = mat_create(2, 4), m2 = mat_create(4, 2), m3;
-	mat_init(m1, new_values1);
-	mat_init(m2, new_values2);
-	printf("Matrix A:\n");
-	mat_print(m1, stdout);
-	printf("\n\nMatrix B:\n");
-	mat_print(m2, stdout);
-	printf("\n\nMatrix A * B:\n");
-	m3 = mat_mult(m1, m2);
-	mat_print(m3, stdout);
-	printf("\n\n");
-	mat_destroy(m3);
-	mat_destroy(m2);
-	mat_destroy(m1);
 	return EXIT_SUCCESS;
 }
