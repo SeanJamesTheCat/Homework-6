@@ -142,7 +142,7 @@ Status mat_set_row( Matrix mat, const float data[], size_t row ) {
 	}
 	return S_STS;
 }
-///
+//
 void mat_scalar_mult( Matrix mat, float data ) {
 	if (data == 1 || !mat) return;
 	size_t num_rows = mat->rows,
@@ -157,12 +157,7 @@ void mat_scalar_mult( Matrix mat, float data ) {
 		}
 	}
 }
-
-Matrix mat_mult( const Matrix m1, const Matrix m2 ) {
-	if (!m1 || !m2) return NULL;
-	return NULL;
-}
-///
+//
 Matrix mat_transpose( const Matrix mat ) {
 	if (!mat) return NULL;
 	size_t num_t_rows = mat->cols,
@@ -188,6 +183,40 @@ Matrix mat_transpose( const Matrix mat ) {
 	}
 	return t_mtx;
 }
+///
+Matrix mat_mult( const Matrix m1, const Matrix m2 ) {
+	if (!m1 || !m2) return NULL;
+	if (m1->cols != m2->rows) return NULL;
+	size_t num_rows = m1->rows,
+	       num_cols = m2->cols,
+	       prod_row = 1, prod_col,
+	       num_shared = m1->cols, shared;
+	Matrix prod_mtx = mat_create(num_rows, num_cols);
+	if (!prod_mtx) return NULL;
+	float sum, value1, value2, 
+	      *value_ptr1 = &value1, *value_ptr2 = &value2;
+	Status status1, status2, status_prod;
+	for (; prod_row <= num_rows; ++prod_row) {
+		for (prod_col = 1; prod_col <= num_cols; ++prod_col) {
+			for (shared = 1, sum = 0; shared <= num_shared; ++shared) {
+				status1 = mat_get_cell(m1, value_ptr1, prod_row, shared);
+				status2 = mat_get_cell(m2, value_ptr2, shared, prod_col);
+				if (status1 != S_STS || status2 != S_STS) {
+					mat_destroy(prod_mtx);
+					return NULL;
+				}
+				sum += value1 * value2;
+			}
+			status_prod = mat_set_cell(prod_mtx, sum, prod_row, prod_col);
+			if (status_prod != S_STS) {
+				mat_destroy(prod_mtx);
+				return NULL;
+			}
+
+		}
+	}
+	return prod_mtx;
+}
 //
 void mat_print( const Matrix mat, FILE *stream ) {
 	if (!mat) return;
@@ -204,24 +233,33 @@ void mat_print( const Matrix mat, FILE *stream ) {
 				fprintf(stream, "\n");
 		}
 	}
-	return;
 }
 //
 int main( void ) {
 	float value, *value_ptr = &value,
-	      new_values[8] = {
+	      new_values1[8] = {
 		      1, 3, 3, 7,
 		      1, 9, 8, 7
 	      },
-	      row[4] = {1, 9, 8, 3};
-	
-	Matrix t_mtx, mtx = mat_create(2, 4);
-	mat_init(mtx, new_values);
-	t_mtx = mat_transpose(mtx);
-	mat_print(mtx, stdout);
+	      new_values2[8] = {
+		      9, 1, 
+		      1, 9,
+		      0, 8, 
+		      21, 3
+	      };
+	Matrix m1 = mat_create(2, 4), m2 = mat_create(4, 2), m3;
+	mat_init(m1, new_values1);
+	mat_init(m2, new_values2);
+	printf("Matrix A:\n");
+	mat_print(m1, stdout);
+	printf("\n\nMatrix B:\n");
+	mat_print(m2, stdout);
+	printf("\n\nMatrix A * B:\n");
+	m3 = mat_mult(m1, m2);
+	mat_print(m3, stdout);
 	printf("\n\n");
-	mat_print(t_mtx, stdout);
-	mat_destroy(t_mtx);
-	mat_destroy(mtx);
+	mat_destroy(m3);
+	mat_destroy(m2);
+	mat_destroy(m1);
 	return EXIT_SUCCESS;
 }
