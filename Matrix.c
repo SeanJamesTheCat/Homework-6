@@ -1,3 +1,8 @@
+/*
+	Homework 6
+	author: Sean James
+*/
+
 #include "Matrix.h"
 #include <stdlib.h>
 
