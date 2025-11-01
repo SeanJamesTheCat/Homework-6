@@ -91,6 +91,8 @@ void mat_scalar_mult( Matrix mat, float data ) {
 Status mat_get_cell( const Matrix mat, float *data, size_t row, size_t col ) {
 	if (mat_row_OOB(mat, row) || !mat) return R_STS;
 	if (mat_col_OOB(mat, col)) return C_STS;
+	size_t row_index = row - 1, col_index = col - 1;
+	*data = mat->data[row_index][col_index];
 	return S_STS;
 }
 
@@ -122,9 +124,28 @@ Matrix mat_transpose( const Matrix mat ) {
 
 void mat_print( const Matrix mat, FILE *stream ) {
 	if (!mat) return;
+	size_t num_rows = mat->rows,
+	       num_cols = mat->cols,
+	       row_i = 1, col_i;
+	float value, *value_ptr = &value;
+	fprintf(stream, "%d rows, %d columns:\n", num_rows, num_cols);
+	for (; row_i <= num_rows; ++row_i) {
+		for (col_i = 1; col_i <= num_cols; ++col_i) {
+			mat_get_cell(mat, value_ptr, row_i, col_i);
+			fprintf(stream, "%8.3f", value);
+			if (col_i == num_cols)
+				fprintf(stream, "\n");
+		}
+	}
 	return;
 }
 
 int main( void ) {
+	float value, *value_ptr = &value;
+	Matrix mtx = mat_create(4, 4);
+	mat_print(mtx, stdout);
+	mat_get_cell(mtx, value_ptr, 1, 1);
+	printf("\n%8.3f\n", value);
+	mat_destroy(mtx);
 	return EXIT_SUCCESS;
 }
