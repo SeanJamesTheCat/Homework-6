@@ -7,6 +7,7 @@ struct matrix_st {
 };
 
 Matrix mat_create( size_t rows, size_t cols ) {
+	if (rows == 0 || cols == 0) return NULL;
 	Matrix mtx = (Matrix) malloc(sizeof(Matrix));
 	if (mtx == NULL) return NULL;
 	mtx->rows = rows;
@@ -37,6 +38,50 @@ void mat_destroy( Matrix mat ) {
 		free(mat->data[row_i]);
 	free(mat->data);
 	free(mat);
+}
+
+void mat_init( Matrix mat, const float data[] ) {
+	return;
+}
+
+Matrix mat_duplicate( const Matrix mat ) {
+	return NULL;
+}
+
+bool mat_equals( const Matrix m1, const Matrix m2 ) {
+	return true;
+}
+
+void mat_scalar_mult( Matrix mat, float data ) {
+	return;
+}
+
+Status mat_get_cell( const Matrix mat, float *data, size_t row, size_t col ) {
+	return Success;
+}
+
+Status mat_set_cell( Matrix mat, float data, size_t row, size_t col ) {
+	return Success;
+}
+
+Status mat_get_row( const Matrix mat, float data[], size_t row ) {
+	return Success;
+}
+
+Status mat_set_row( Matrix mat, const float data[], size_t row ) {
+	return Success;
+}
+
+Matrix mat_mult( const Matrix m1, const Matrix m2 ) {
+	return NULL;
+}
+
+Matrix mat_transpose( const Matrix mat ) {
+	return NULL;
+}
+
+void mat_print( const Matrix mat, FILE *stream ) {
+	return;
 }
 
 int main( void ) {
